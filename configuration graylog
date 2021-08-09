@@ -1,0 +1,66 @@
+Installation des pré-requis:
+- java
+- mongodb
+- elasticsearch 
+Configuration du pare-feu pour l'ouverture du port 9000
+
+Liste des commandes utilisées 
+
+yum install java-1.8.0-openjdk-headless.x86_64
+vim /etc/yum.repos.d/mongodb-org.repo
+yum install mongodb-org
+systemctl enable mongod.service
+systemctl restart mongod.service
+systemctl start mongod.service
+rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+vim /etc/yum.repos.d/elasticsearch.repo
+yum install elasticsearch-oss -y
+systemctl enable elasticsearch.service
+systemctl restart elasticsearch.service
+systemctl start elasticsearch.service
+yum install epel-release -y
+yum install pwgen -y
+rpm -Uvh https://packages.graylog2.org/repo/packages/graylog-4.0-repository_latest.rpm
+yum install graylog-server -y
+pwgen -N 1 -s 96
+vim /etc/graylog/server/server.conf
+systemctl enable graylog-server.service
+systemctl restart graylog-server.service
+systemctl start graylog-server.service
+setsebool -P httpd_can_network_connect 1
+sudo semanage port -a -t mongod_port_t -p tcp 27017
+firewall-cmd --zone=public --add-port=9000/tcp --permanent
+firewall-cmd --reload
+
+
+
+systemctl enable graylog-server.service
+systemctl start graylog-server.service
+
+setsebool -P httpd_can_network_connect 1
+sudo semanage port -a -t mongod_port_t -p tcp 27017
+firewall-cmd --zone=public --add-port=9000/tcp --permanent
+sudo semanage port -a -t http_port_t -p tcp 9200
+sudo semanage port -a -t http_port_t -p tcp 9000
+firewall-cmd --reload
+
+
+sudo systemctl daemon-reload
+sudo systemctl enable mongod.service
+sudo systemctl start mongod.service
+
+sudo systemctl daemon-reload
+sudo systemctl enable elasticsearch.service
+sudo systemctl restart elasticsearch.service
+
+
+sudo systemctl daemon-reload
+sudo systemctl enable graylog-server.service
+sudo systemctl start graylog-server.service
+
+
+
+
+https://docs.graylog.org/en/3.0/pages/sidecar.html
+
+https://github.com/Graylog2/collector-sidecar/releases
